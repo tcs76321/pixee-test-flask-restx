@@ -100,8 +100,7 @@ class Namespace(object):
         """
 
         def wrapper(cls):
-            doc = kwargs.pop("doc", None)
-            if doc is not None:
+            if (doc := kwargs.pop("doc", None)) is not None:
                 # build api doc intended only for this route
                 kwargs["route_doc"] = self._build_doc(cls, doc)
             self.add_resource(cls, *urls, **kwargs)

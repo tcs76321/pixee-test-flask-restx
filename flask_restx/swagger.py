@@ -90,8 +90,7 @@ def parse_rule(rule):
     do_match = RE_PARSE_RULE.match
     used_names = set()
     while pos < end:
-        m = do_match(rule, pos)
-        if m is None:
+        if (m := do_match(rule, pos)) is None:
             break
         data = m.groupdict()
         if data["static"]:
@@ -345,11 +344,9 @@ class Swagger(object):
         return tags
 
     def extract_resource_doc(self, resource, url, route_doc=None):
-        route_doc = {} if route_doc is None else route_doc
-        if route_doc is False:
+        if (route_doc := {} if route_doc is None else route_doc) is False:
             return False
-        doc = merge(getattr(resource, "__apidoc__", {}), route_doc)
-        if doc is False:
+        if (doc := merge(getattr(resource, "__apidoc__", {}), route_doc)) is False:
             return False
 
         # ensure unique names for multiple routes to the same resource
@@ -371,10 +368,9 @@ class Swagger(object):
                 method_impl = method_impl.im_func
             elif hasattr(method_impl, "__func__"):
                 method_impl = method_impl.__func__
-            method_doc = merge(
+            if (method_doc := merge(
                 method_doc, getattr(method_impl, "__apidoc__", OrderedDict())
-            )
-            if method_doc is not False:
+            )) is not False:
                 method_doc["docstring"] = parse_docstring(method_impl)
                 method_params = self.expected_params(method_doc)
                 method_params = merge(method_params, method_doc.get("params", {}))
@@ -471,8 +467,7 @@ class Swagger(object):
         return responses
 
     def serialize_resource(self, ns, resource, url, route_doc=None, **kwargs):
-        doc = self.extract_resource_doc(resource, url, route_doc=route_doc)
-        if doc is False:
+        if (doc := self.extract_resource_doc(resource, url, route_doc=route_doc)) is False:
             return
         path = {"parameters": self.parameters_for(doc) or None}
         for method in [m.lower() for m in resource.methods or []]:
