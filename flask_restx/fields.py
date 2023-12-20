@@ -192,9 +192,8 @@ class Raw(object):
         :raises MarshallingError: In case of formatting problem
         """
 
-        value = get_value(key if self.attribute is None else self.attribute, obj)
 
-        if value is None:
+        if (value := get_value(key if self.attribute is None else self.attribute, obj)) is None:
             default = self._v("default")
             return self.format(default) if default else default
 
@@ -261,8 +260,7 @@ class Nested(Raw):
         return getattr(self.model, "resolved", self.model)
 
     def output(self, key, obj, ordered=False, **kwargs):
-        value = get_value(key if self.attribute is None else self.attribute, obj)
-        if value is None:
+        if (value := get_value(key if self.attribute is None else self.attribute, obj)) is None:
             if self.allow_null:
                 return None
             elif self.default is not None:
@@ -701,8 +699,7 @@ class ClassName(String):
         self.dash = dash
 
     def output(self, key, obj, **kwargs):
-        classname = obj.__class__.__name__
-        if classname == "dict":
+        if (classname := obj.__class__.__name__) == "dict":
             return "object"
         return camel_to_dash(classname) if self.dash else classname
 
@@ -734,8 +731,7 @@ class Polymorph(Nested):
 
     def output(self, key, obj, ordered=False, **kwargs):
         # Copied from upstream NestedField
-        value = get_value(key if self.attribute is None else self.attribute, obj)
-        if value is None:
+        if (value := get_value(key if self.attribute is None else self.attribute, obj)) is None:
             if self.allow_null:
                 return None
             elif self.default is not None:

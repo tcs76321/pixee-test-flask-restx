@@ -112,8 +112,7 @@ def validate(data):
 
     validator = VERSIONS[version].validator
 
-    validation_errors = list(validator.iter_errors(data))
-    if validation_errors:
+    if validation_errors := list(validator.iter_errors(data)):
         raise SchemaValidationError(
             "OpenAPI {} validation failed".format(version), errors=validation_errors
         )

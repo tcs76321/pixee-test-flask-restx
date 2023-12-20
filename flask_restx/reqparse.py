@@ -435,8 +435,7 @@ class RequestParser(object):
         params = []
         locations = set()
         for arg in self.args:
-            param = arg.__schema__
-            if param:
+            if param := arg.__schema__:
                 params.append(param)
                 locations.add(param["in"])
         if "body" in locations and "formData" in locations:

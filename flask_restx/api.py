@@ -420,11 +420,10 @@ class Api(object):
         default_mediatype = (
             kwargs.pop("fallback_mediatype", None) or self.default_mediatype
         )
-        mediatype = request.accept_mimetypes.best_match(
+        if (mediatype := request.accept_mimetypes.best_match(
             self.representations,
             default=default_mediatype,
-        )
-        if mediatype is None:
+        )) is None:
             raise NotAcceptable()
         if mediatype in self.representations:
             resp = self.representations[mediatype](data, *args, **kwargs)
@@ -678,8 +677,7 @@ class Api(object):
         app.testing is set. This method was deprecated in Flask 2.3 but
         we still need it for our error handlers.
         """
-        rv = current_app.config.get("PROPAGATE_EXCEPTIONS")
-        if rv is not None:
+        if (rv := current_app.config.get("PROPAGATE_EXCEPTIONS")) is not None:
             return rv
         return current_app.testing or current_app.debug
 
@@ -792,8 +790,7 @@ class Api(object):
                 for rule in current_app.url_map.iter_rules()
             ]
         )
-        close_matches = difflib.get_close_matches(request.path, rules.keys())
-        if close_matches:
+        if close_matches := difflib.get_close_matches(request.path, rules.keys()):
             # If we already have a message, add punctuation and continue it.
             message = "".join(
                 (
